@@ -1,0 +1,169 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.23'
+    id 'org.javamodularity.moduleplugin' version '1.8.12'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.beryx.jlink' version '2.25.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.23' // Kotlin Serialization
+    id 'jacoco'
+}
+
+group 'dev.joseluisgs'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    junitVersion = '5.10.0'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+
+application {
+    mainModule = 'dev.joseluisgs.expedientesacademicos'
+    mainClass = 'dev.joseluisgs.expedientesacademicos.ExpedientesApplication'
+}
+
+kotlin {
+    jvmToolchain(21)
+}
+
+javafx {
+    version = '21'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+dependencies {
+    // Logger
+    implementation("org.lighthousegames:logging:1.3.0")
+    implementation("ch.qos.logback:logback-classic:1.4.14")
+
+    // Base de datos a usar, driver
+    implementation("com.h2database:h2:2.3.232") // H2
+
+    // JDBI
+    implementation("org.jetbrains.kotlin:kotlin-reflect") // Necesario para JDBI la reflexión
+    implementation("org.jdbi:jdbi3-core:3.48.0") // Core
+    implementation("org.jdbi:jdbi3-sqlobject:3.48.0") // SQL Object para DAO
+    implementation("org.jdbi:jdbi3-kotlin:3.48.0") // Kotlin extension
+    implementation("org.jdbi:jdbi3-kotlin-sqlobject:3.48.0") // Kotlin extension para SQL Object
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
+
+    // Kotlin Serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
+    // Result
+    implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.0")
+
+    // Open Brwoser
+    implementation("com.vaadin:open:8.5.0.4")
+
+    // Cache Caffeine
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
+
+    // Koin
+    implementation(platform("io.insert-koin:koin-bom:3.5.6"))
+    implementation("io.insert-koin:koin-core") // Core
+
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
+    // Test
+    // testImplementation("io.mockk:mockk:1.13.16") // Mocks
+
+    //https://www.baeldung.com/kotlin/mockito
+    //Mockito for Kotlin
+    // https://github.com/mockito/mockito-kotlin
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
+    // Mockito Core, si vas a usar Mockito, sin Kotlin version
+    //testImplementation("org.mockito:mockito-core:5.12.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
+
+
+    // Jacoco
+    implementation("org.jacoco:org.jacoco.core:0.8.12")
+    testImplementation "org.jetbrains.kotlin:kotlin-test:1.9.23" //
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+    // Con abrimos junit para que pueda usar todo, incluso los de Kotlin
+    /* jvmArgs(
+             "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+             "--add-opens", "java.base/java.util=ALL-UNNAMED",
+             "--add-reads", "org.junit.jupiter.api=kotlin.stdlib"
+     )*/
+}
+
+jlink {
+    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher {
+        name = 'app'
+    }
+}
+
+jlinkZip {
+    group = 'distribution'
+}
+
+// Jar ejecutable
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'dev.joseluisgs.expedientesacademicos.ExpedientesApplication'
+    }
+    from {
+        configurations["compileClasspath"].collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+jacocoTestReport {
+    dependsOn test // Asegúrate de que los tests se ejecuten antes del reporte
+
+    reports {
+        xml.required = true // Genera el reporte XML
+        csv.required = false // No generes el reporte CSV
+        html.required = true // Genera el reporte HTML
+        // html.outputLocation = layout.buildDirectory.dir("jacocoHtml") // Ubicación del reporte HTML
+    }
+
+    // Exclusiones de cobertura
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "**/model/**",
+                    "**/exceptions/**",
+                    "**/*Main*.*"
+            ])
+        }))
+    }
+}
+
+// Tarea adicional para verificación de cobertura mínima
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.8 // 80% de cobertura mínima
+            }
+        }
+    }
+}
+
+// Tarea personalizada para ejecutar tests y verificación
+task testCoverage(group: 'verification', description: 'Runs the unit tests with coverage') {
+    dependsOn test,
+            jacocoTestReport,
+            jacocoTestCoverageVerification
+}
+

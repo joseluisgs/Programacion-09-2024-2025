@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21"
+      fx:controller="dev.joseluisgs.listasmenuresult.controllers.ListaMenuController">
+    <children>
+        <MenuBar>
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem fx:id="menuCerrar" mnemonicParsing="false" text="Close">
+                            <graphic>
+                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/exit.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </MenuItem>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem fx:id="menuAcercaDe" mnemonicParsing="false" text="About">
+                            <graphic>
+                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icons/about.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </MenuItem>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                   prefHeight="400.0" prefWidth="600.0">
+            <children>
+                <SplitPane dividerPositions="0.29797979797979796" prefHeight="160.0" prefWidth="200.0">
+                    <items>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="274.0">
+                            <children>
+                                <VBox prefHeight="398.4" prefWidth="175.2" spacing="5.0" AnchorPane.bottomAnchor="0.0"
+                                      AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
+                                      AnchorPane.topAnchor="50.0">
+                                    <children>
+                                        <Label text="Nombre"/>
+                                        <TextField fx:id="textNombre" promptText="Nombre"/>
+                                        <HBox alignment="CENTER">
+                                            <VBox.margin>
+                                                <Insets top="25.0"/>
+                                            </VBox.margin>
+                                            <children>
+                                                <Button fx:id="botonAdd" mnemonicParsing="false" text="Añadir">
+                                                    <graphic>
+                                                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true"
+                                                                   preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../icons/new.png"/>
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </AnchorPane>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                            <children>
+                                <VBox alignment="TOP_CENTER" prefHeight="398.4" prefWidth="417.6"
+                                      AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
+                                      AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                                    <children>
+                                        <ScrollPane prefHeight="322.0" prefWidth="408.0">
+                                            <content>
+                                                <ListView fx:id="listaNombres" prefHeight="314.0" prefWidth="399.0"/>
+                                            </content>
+                                        </ScrollPane>
+                                        <Separator prefWidth="200.0"/>
+                                        <HBox alignment="CENTER">
+                                            <children>
+                                                <Label prefHeight="18.0" prefWidth="35.0" text="Total:">
+                                                    <font>
+                                                        <Font name="System Bold" size="12.0"/>
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="labelContador" text="0">
+                                                    <font>
+                                                        <Font name="System Bold" size="12.0"/>
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                        <Button fx:id="botonEliminar" mnemonicParsing="false" text="Eliminar">
+                                            <VBox.margin>
+                                                <Insets bottom="20.0" top="20.0"/>
+                                            </VBox.margin>
+                                            <graphic>
+                                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true"
+                                                           preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../icons/delete.png"/>
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </AnchorPane>
+                    </items>
+                </SplitPane>
+            </children>
+        </StackPane>
+    </children>
+</VBox>
